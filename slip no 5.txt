@@ -1,0 +1,194 @@
+slip no 5
+Q 1. Write a C program which uses Binary search tree library and displays nodes at each level,count
+of node at each level. 
+
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct TreeNode
+{
+    int data;
+    struct TreeNode *left, *right;
+} TreeNode;
+
+TreeNode* createNode(int data)
+{
+    TreeNode* newNode = (TreeNode*)malloc(sizeof(TreeNode));
+    newNode->data = data;
+    newNode->left = newNode->right = NULL;
+    return newNode;
+}
+
+TreeNode* insert(TreeNode* root, int data)
+{
+    if (root == NULL)
+    {
+        return createNode(data);
+    }
+    if (data < root->data)
+    {
+        root->left = insert(root->left, data);
+    }
+    else if (data > root->data)
+    {
+        root->right = insert(root->right, data);
+    }
+    return root;
+}
+
+int height(TreeNode* root)
+{
+    if (root == NULL)
+    {
+        return 0;
+    }
+    int leftHeight = height(root->left);
+    int rightHeight = height(root->right);
+    if (leftHeight > rightHeight)
+    {
+        return leftHeight + 1;
+    }
+    else
+    {
+        return rightHeight + 1;
+    }
+}
+
+void printLevel(TreeNode* root, int level, int* count)
+{
+    if (root == NULL)
+    {
+        return;
+    }
+    if (level == 1)
+    {
+        printf("%d ", root->data);
+        (*count)++;
+    }
+    else if (level > 1)
+    {
+        printLevel(root->left, level-1, count);
+        printLevel(root->right, level-1, count);
+    }
+}
+
+void printLevelOrder(TreeNode* root)
+{
+    int h = height(root);
+    int i;
+    for (i = 1; i <= h; i++)
+    {
+        int count = 0;
+        printf("Level %d: ", i);
+        printLevel(root, i, &count);
+        printf("(Count = %d)\n", count);
+    }
+}
+
+int main()
+{
+    TreeNode* root = NULL;
+    root = insert(root, 50);
+    insert(root, 30);
+    insert(root, 20);
+    insert(root, 40);
+    insert(root, 70);
+    insert(root, 60);
+    insert(root, 80);
+
+    printf("Level Order Traversal:\n");
+    printLevelOrder(root);
+
+    return 0;
+
+}
+output
+Enter the number of nodes: 7
+Enter the node values: 50 30 70 20 40 60 80
+
+Nodes at each level:
+Level   Nodes
+0       1
+1       2
+2       4
+
+Q 2. Write a program to sort n randomly generated elements using Heapsort method.
+#include <stdio.h>
+#include <stdlib.h>
+
+void heapify(int arr[], int n, int i)
+{
+    int largest = i;
+    int left = 2*i + 1;
+    int right = 2*i + 2;
+
+    if (left < n && arr[left] > arr[largest])
+    {
+        largest = left;
+    }
+
+    if (right < n && arr[right] > arr[largest])
+    {
+        largest = right;
+    }
+
+    if (largest != i)
+    {
+        int temp = arr[i];
+        arr[i] = arr[largest];
+        arr[largest] = temp;
+        heapify(arr, n, largest);
+    }
+}
+
+void heapSort(int arr[], int n)
+{
+    int i;
+    for (i = n/2 - 1; i >= 0; i--)
+    {
+        heapify(arr, n, i);
+    }
+
+    for (i = n-1; i >= 0; i--)
+    {
+        int temp = arr[0];
+        arr[0] = arr[i];
+        arr[i] = temp;
+        heapify(arr, i, 0);
+    }
+}
+
+void printArray(int arr[], int n)
+{
+    int i;
+    for (i = 0; i < n; i++)
+    {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+int main()
+{
+    int n, i;
+    printf("Enter the number of elements to be sorted: ");
+    scanf("%d", &n);
+
+    int arr[n];
+    for (i = 0; i < n; i++)
+    {
+        arr[i] = rand() % 100; 
+    }
+
+    printf("Unsorted array:\n");
+    printArray(arr, n);
+
+    heapSort(arr, n);
+
+    printf("Sorted array:\n");
+    printArray(arr, n);
+
+    return 0;
+}
+
+

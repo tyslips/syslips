@@ -1,0 +1,179 @@
+slip nno:-19
+Q 1. Implement a Binary search tree (BST) library (btree.h) with operations – create, insert, in 
+order. Write a menu driven program that performs the above operations. 
+#ifndef BTREE_H
+#define BTREE_H
+
+typedef struct node {
+    int data;
+    struct node* left;
+    struct node* right;
+} Node;
+
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    newNode->data = data;
+    newNode->left = NULL;
+    newNode->right = NULL;
+    return newNode;
+}
+
+Node* insert(Node* root, int data) {
+    if (root == NULL) {
+        return createNode(data);
+    }
+    if (data < root->data) {
+        root->left = insert(root->left, data);
+    } else if (data > root->data) {
+        root->right = insert(root->right, data);
+    }
+    return root;
+}
+
+void inorder(Node* root) {
+    if (root != NULL) {
+        inorder(root->left);
+        printf("%d ", root->data);
+        inorder(root->right);
+    }
+}
+
+#endif
+*
+#include <stdio.h>
+#include <stdlib.h>
+#include "btree.h"
+
+int main() {
+    Node* root = NULL;
+    int choice, data;
+
+    while(1) {
+        printf("\n\nBinary Search Tree Operations\n");
+        printf("----------------------------\n");
+        printf("1. Insert\n");
+        printf("2. Inorder Traversal\n");
+        printf("3. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch(choice) {
+            case 1:
+                printf("Enter data to be inserted: ");
+                scanf("%d", &data);
+                root = insert(root, data);
+                break;
+            case 2:
+                printf("Inorder Traversal: ");
+                inorder(root);
+                printf("\n");
+                break;
+            case 3:
+                exit(0);
+            default:
+                printf("Invalid choice\n");
+        }
+    }
+
+    return 0;
+}
+
+Q 2. Write a C program that accepts the vertices and edges of a graph. Create adjacency list
+anddisplay the adjacency list.
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct node {
+    int dest;
+    struct node* next;
+} Node;
+
+typedef struct list {
+    Node* head;
+} List;
+
+typedef struct graph {
+    int V;
+    List* array;
+} Graph;
+
+Node* createNode(int dest) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    newNode->dest = dest;
+    newNode->next = NULL;
+    return newNode;
+}
+
+Graph* createGraph(int V) {
+    Graph* graph = (Graph*)malloc(sizeof(Graph));
+    graph->V = V;
+    graph->array = (List*)malloc(V * sizeof(List));
+    for (int i = 0; i < V; i++) {
+        graph->array[i].head = NULL;
+    }
+    return graph;
+}
+
+void addEdge(Graph* graph, int src, int dest) {
+    Node* newNode = createNode(dest);
+    newNode->next = graph->array[src].head;
+    graph->array[src].head = newNode;
+
+    newNode = createNode(src);
+    newNode->next = graph->array[dest].head;
+    graph->array[dest].head = newNode;
+}
+
+void printGraph(Graph* graph) {
+    for (int i = 0; i < graph->V; i++) {
+        printf("Adjacency list of vertex %d:\nhead", i);
+        Node* temp = graph->array[i].head;
+        while (temp != NULL) {
+            printf(" -> %d", temp->dest);
+            temp = temp->next;
+        }
+        printf("\n");
+    }
+}
+
+int main() {
+    int V, E, src, dest;
+    printf("Enter the number of vertices: ");
+    scanf("%d", &V);
+    Graph* graph = createGraph(V);
+
+    printf("Enter the number of edges: ");
+    scanf("%d", &E);
+
+    for (int i = 0; i < E; i++) {
+        printf("Enter edge %d: ", i + 1);
+        scanf("%d %d", &src, &dest);
+        addEdge(graph, src, dest);
+    }
+
+    printf("Adjacency list of the graph:\n");
+    printGraph(graph);
+
+    return 0;
+}
+
+output:-
+Enter the number of vertices: 5
+Enter the number of edges: 4
+Enter edge 1: 0 1
+Enter edge 2: 0 4
+Enter edge 3: 1 2
+Enter edge 4: 3 4
+Adjacency list of the graph:
+Adjacency list of vertex 0:
+head -> 4 -> 1
+Adjacency list of vertex 1:
+head -> 2 -> 0
+Adjacency list of vertex 2:
+head -> 1
+Adjacency list of vertex 3:
+head -> 4
+Adjacency list of vertex 4:
+head -> 3 -> 0
+
+

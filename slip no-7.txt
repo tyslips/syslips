@@ -1,0 +1,208 @@
+slip no:-7
+Q 1. Write a C program for the implementation of Floyd Warshall’s algorithm for finding all pairs
+shortest path using adjacency cost matrix.
+#include <stdio.h>
+#include <limits.h>
+
+#define V 4 // number of vertices
+
+void printSolution(int dist[][V]) {
+    printf("Shortest distances between every pair of vertices:\n");
+    for (int i = 0; i < V; i++) {
+        for (int j = 0; j < V; j++) {
+            if (dist[i][j] == INT_MAX)
+                printf("INF ");
+            else
+                printf("%d ", dist[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+void floydWarshall(int graph[][V]) {
+    int dist[V][V];
+
+    // Initialize the distance matrix with the input graph
+    for (int i = 0; i < V; i++)
+        for (int j = 0; j < V; j++)
+            dist[i][j] = graph[i][j];
+
+    // Iterate over all intermediate nodes
+    for (int k = 0; k < V; k++) {
+        // Iterate over all start nodes
+        for (int i = 0; i < V; i++) {
+            // Iterate over all end nodes
+            for (int j = 0; j < V; j++) {
+                // Check if the path through node k is shorter than the current shortest path
+                if (dist[i][k] != INT_MAX && dist[k][j] != INT_MAX && dist[i][k] + dist[k][j] < dist[i][j]) {
+                    dist[i][j] = dist[i][k] + dist[k][j];
+                }
+            }
+        }
+    }
+
+    printSolution(dist);
+}
+
+int main() {
+    int graph[V][V] = {
+        {0, 5, INT_MAX, 10},
+        {INT_MAX, 0, 3, INT_MAX},
+        {INT_MAX, INT_MAX, 0, 1},
+        {INT_MAX, INT_MAX, INT_MAX, 0}
+    };
+
+    floydWarshall(graph);
+
+    return 0;
+}
+Q2. Write a program to sort n randomly generated elements using Heap sort method. 
+#include <stdio.h>
+#include <stdlib.h>
+
+// function to swap two elements
+void swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+// function to perform heapify operation
+void heapify(int arr[], int n, int i) {
+    int largest = i;
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
+
+    if (left < n && arr[left] > arr[largest])
+        largest = left;
+
+    if (right < n && arr[right] > arr[largest])
+        largest = right;
+
+    if (largest != i) {
+        swap(&arr[i], &arr[largest]);
+        heapify(arr, n, largest);
+    }
+}
+
+// main function for heap sort
+void heapSort(int arr[], int n) {
+    // Build max heap
+    for (int i = n / 2 - 1; i >= 0; i--)
+        heapify(arr, n, i);
+
+    // Extract elements from heap one by one
+    for (int i = n - 1; i > 0; i--) {
+        swap(&arr[0], &arr[i]);
+        heapify(arr, i, 0);
+    }
+}
+
+int main() {
+    int n;
+    printf("Enter the number of elements: ");
+    scanf("%d", &n);
+
+    int arr[n];
+    printf("Enter %d elements:\n", n);
+    for (int i = 0; i < n; i++)
+        scanf("%d", &arr[i]);
+
+    heapSort(arr, n);
+
+    printf("\nSorted array:\n");
+    for (int i = 0; i < n; i++)
+        printf("%d ", arr[i]);
+
+    return 0;
+}
+OR
+Q 2. Write a C program which uses Binary search tree library and displays nodes at each level,
+and total levels in the tree.
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <ctype.h>
+
+// Binary search tree structure
+typedef struct node {
+    int data;
+    struct node *left;
+    struct node *right;
+} Node;
+
+// function to insert a new node into the binary search tree
+Node* insert(Node *root, int data) {
+    if (root == NULL) {
+        Node *newNode = (Node*)malloc(sizeof(Node));
+        newNode->data = data;
+        newNode->left = NULL;
+        newNode->right = NULL;
+        return newNode;
+    }
+
+    if (data < root->data)
+        root->left = insert(root->left, data);
+    else
+        root->right = insert(root->right, data);
+
+    return root;
+}
+
+// function to calculate the height of the binary search tree
+int height(Node *root) {
+    if (root == NULL)
+        return 0;
+
+    int leftHeight = height(root->left);
+    int rightHeight = height(root->right);
+
+    return 1 + (leftHeight > rightHeight ? leftHeight : rightHeight);
+}
+
+// function to print the nodes at a given level of the binary search tree
+void printLevel(Node *root, int level) {
+    if (root == NULL)
+        return;
+
+    if (level == 1)
+        printf("%d ", root->data);
+    else if (level > 1) {
+        printLevel(root->left, level - 1);
+        printLevel(root->right, level - 1);
+    }
+}
+
+// function to print the nodes at each level of the binary search tree
+void printLevels(Node *root) {
+    int h = height(root);
+    for (int i = 1; i <= h; i++) {
+        printf("Level %d: ", i);
+        printLevel(root, i);
+        printf("\n");
+    }
+}
+
+int main() {
+    Node *root = NULL;
+    char ch;
+    int data;
+
+    printf("Enter the elements of the binary search tree:\n");
+    do {
+        scanf("%d", &data);
+        root = insert(root, data);
+
+        printf("Do you want to enter another element? (y/n): ");
+        scanf(" %c", &ch);
+    } while (tolower(ch) == 'y');
+
+    printf("\nNodes at each level of the binary search tree:\n");
+    printLevels(root);
+
+    printf("\nTotal levels in the binary search tree: %d\n", height(root));
+
+    return 0;
+}
+
